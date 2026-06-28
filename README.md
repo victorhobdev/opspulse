@@ -1,6 +1,6 @@
 # OpsPulse
 
-Um mini SaaS de **agendamento + execução + histórico** de rotinas HTTP — pensado como projeto de portfólio para demonstrar, na prática, competências de **back-end**, **dados/SQL**, **automação/scheduler**, **cloud/deploy** e **integrações**
+Sistema para **cadastro, execução agendada e acompanhamento de rotinas HTTP** — com histórico de execuções, autenticação, controle de concorrência e visibilidade do que foi executado, quando e com qual resultado.
 
 ## Demo
 
@@ -10,16 +10,9 @@ Um mini SaaS de **agendamento + execução + histórico** de rotinas HTTP — pe
 - Email: demo@opspulse.app
 - Senha: opspulse
 
-> **Objetivo do projeto:** resolver um problema real de operação — ter um lugar simples para **agendar, executar e acompanhar rotinas HTTP** (pings, webhooks e checagens), com histórico e visibilidade do que deu certo/errado.  
->  
-> Ao mesmo tempo, o OpsPulse serve como um “laboratório prático” para eu **aplicar na prática os conceitos da trilha AZ-900**, principalmente:
-> - computação em nuvem e modelo de responsabilidade compartilhada
-> - serviços gerenciados e configuração por variáveis de ambiente
-> - observabilidade por logs e rastreabilidade de execuções
-> - autenticação/autorização em aplicações modernas
-> - deploy e separação clara entre front-end e back-end
->  
-> A prioridade do projeto é ser **simples, funcional e barato de manter**, usando free tiers sempre que possível.
+> **Problema que resolve:** ter um lugar simples para **agendar, executar e acompanhar rotinas HTTP** (pings, webhooks e checagens), com histórico persistido e rastreabilidade do que deu certo/errado.
+>
+> A prioridade é ser **simples, funcional e barato de manter**, usando free tiers sempre que possível.
 
 ---
 
@@ -38,7 +31,7 @@ Você consegue:
 
 ---
 
-## Stack (baixo custo, alto valor de currículo)
+## Stack
 
 **Back-end**
 - Azure Functions (Python)
@@ -61,7 +54,7 @@ Você consegue:
 
 ---
 
-## Conceitos e decisões importantes (o que esse projeto prova)
+## Decisões técnicas
 
 ### 1) Scheduler robusto (sem virar monstro)
 - Agendamento por `interval_minutes` (>= 5) no MVP
