@@ -56,33 +56,33 @@ Você consegue:
 
 ## Decisões técnicas
 
-### 1) Scheduler robusto (sem virar monstro)
-- Agendamento por `interval_minutes` (>= 5) no MVP
-- Busca rotinas “devidas” por `next_run_at`
+### Scheduler
+- Agendamento por `interval_minutes` (>= 5)
+- Busca rotinas "devidas" por `next_run_at`
 - Proteção de concorrência com lock (`lock_until`, `locked_by`)
 - `MAX_CONCURRENCY` para limitar execuções em paralelo
 - Timeout controlado na execução HTTP
 
-### 2) Drift e “perda de tick” resolvidos
-O scheduler roda a cada 5 minutos (Timer Trigger). Na prática, o trigger pode acordar alguns segundos “antes do minuto cravado”. Para não perder o slot:
-- query considera um pequeno slack (`DUE_SLACK_SECONDS`, default 3s)
-- cálculo do próximo `next_run_at` é ancorado no slot devido, evitando drift
-- timestamps padronizados com truncagem para minuto (segundos/micros = 0)
+### Controle de drift
+O Timer Trigger pode acordar alguns segundos antes do slot. Para não perder execuções:
+- Query considera slack configurável (`DUE_SLACK_SECONDS`, default 3s)
+- Próximo `next_run_at` é ancorado no slot devido, evitando drift acumulado
+- Timestamps padronizados com truncagem para minuto
 
-### 3) Segurança básica de produção
+### Segurança de produção
 - Segredos **não** vão para o banco
 - `auth_mode = NONE | SECRET_REF`
 - `secret_ref` aponta para env var no backend (Azure App Settings)
 - Backend bloqueia headers sensíveis em `headers_json` (ex.: `Authorization`, `Cookie`, `X-API-Key`)
 - Backend usa `SERVICE_ROLE` apenas no servidor (nunca no front)
 
-### 4) “Vida real” de engenharia
-O projeto registra e incorpora problemas reais que surgem no caminho:
-- deploy separado (Vercel vs Azure)
+### Observações de deploy
+Pontos encontrados na operação real:
+- Deploy separado (Vercel vs Azure)
 - SPA rewrite (refresh em rota)
-- diferenças de tipos/serialização (Pydantic/URL)
-- variáveis de ambiente e tokens (CRLF, etc.)
-- consistência de enums/constraints no banco
+- Diferenças de tipos/serialização (Pydantic/URL)
+- Variáveis de ambiente e tokens (CRLF, etc.)
+- Consistência de enums/constraints no banco
 
 ---
 
@@ -94,7 +94,6 @@ Tabelas:
   `endpoint_url`, `http_method`, `headers_json`, `auth_mode`, `secret_ref`, `lock_until`, `locked_by`, `created_at`, `updated_at`
 - `routine_runs`: `routine_id`, `triggered_by (MANUAL|SCHEDULE)`, `status (SUCCESS|FAIL)`, `http_status`, `duration_ms`,
   `error_message`, `started_at`, `finished_at`, `created_at`
-  - campos futuros previstos: `ai_summary`, `ai_confidence`
 
 Índices principais (foco scheduler e histórico):
 - `idx_routines_scheduler (is_active, next_run_at)`
